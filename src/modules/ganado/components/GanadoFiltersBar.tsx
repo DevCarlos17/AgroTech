@@ -18,7 +18,6 @@ const STATUS_OPTIONS_ALL = [
   { value: 'Lactancia',  label: 'Lactancia'  },
   { value: 'Seca',       label: 'Seca'       },
   { value: 'Arrestada',  label: 'Arrestada'  },
-  { value: 'Ceva',       label: 'Ceva'       },
   { value: 'Gestante',   label: 'Gestante'   },
 ];
 

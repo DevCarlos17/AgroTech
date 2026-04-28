@@ -46,7 +46,17 @@ export function useMoveToLote() {
   const updateAnimal = useAnimalStore((s) => s.updateAnimal);
   return useMutation({
     mutationFn: async ({ id, lote, tipoManejo }: { id: string; lote: LoteNombre; tipoManejo: TipoManejo }) => {
-      updateAnimal(id, { lote, tipoManejo });
+      const updates: Partial<Animal> = { lote, tipoManejo };
+      if (lote === 'Ceva') {
+        updates.estado = 'Ceva';
+        updates.estadoProduccion = undefined;
+      } else {
+        const current = useAnimalStore.getState().animals.find((a) => a.id === id);
+        if (current?.estado === 'Ceva') {
+          updates.estado = 'Seca';
+        }
+      }
+      updateAnimal(id, updates);
       return id;
     },
     onSuccess: () => {

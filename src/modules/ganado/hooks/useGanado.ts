@@ -32,10 +32,11 @@ export function useGanado(): UseGanadoReturn {
   const filtered = useMemo(() => {
     let list = allAnimals;
 
-    // Tab filter (primary category)
+    // Tab filter — mutually exclusive
     if (activeTab === 'Ceva') {
       list = list.filter((a) => a.estado === 'Ceva');
-    } else if (activeTab === 'Produccion') {
+    } else {
+      // Bovinos and Produccion both exclude Ceva animals
       list = list.filter((a) => a.estado !== 'Ceva');
     }
 

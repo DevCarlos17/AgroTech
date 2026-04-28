@@ -41,7 +41,7 @@ export const NuevoTratamientoModal: FC = () => {
         <Field label="Animal">
           <select value={animalId} onChange={(e) => setAnimalId(e.target.value)} className={INPUT_CLS}>
             {animals.map((a) => (
-              <option key={a.id} value={a.id}>#{a.id} — {a.nombre}</option>
+              <option key={a.id} value={a.id}>#{a.id}{a.nombre ? ` — ${a.nombre}` : ''}</option>
             ))}
           </select>
         </Field>

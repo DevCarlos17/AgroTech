@@ -43,7 +43,7 @@ export const RegistrarPesajeModal: FC = () => {
           >
             {animals.map((a) => (
               <option key={a.id} value={a.id}>
-                #{a.id} — {a.nombre}
+                #{a.id}{a.nombre ? ` — ${a.nombre}` : ''}
               </option>
             ))}
           </select>
