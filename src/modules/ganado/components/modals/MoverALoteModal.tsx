@@ -2,22 +2,24 @@ import { type FC, useState } from 'react';
 import { Modal } from '../../../../shared/components/Modal';
 import { useUIStore } from '../../../../shared/store/useUIStore';
 import { useMoveToLote } from '../../hooks/mutations/useAnimalMutations';
-import { useAnimalStore } from '../../store/useAnimalStore';
-import type { LoteNombre, TipoManejo } from '../../types/ganado.types';
+import { useAnimalStore, LOTES_DEFAULT } from '../../store/useAnimalStore';
+import type { TipoManejo } from '../../types/ganado.types';
 
-const LOTES: LoteNombre[] = ['Escotero', 'Parido', 'Crías', 'Ceva'];
 const TIPOS_MANEJO: TipoManejo[] = ['Tabulado', 'Semi-tabulado', 'Extensivo'];
 
 export const MoverALoteModal: FC = () => {
   const closeModal = useUIStore((s) => s.closeModal);
   const modalData = useUIStore((s) => s.modalData);
   const animals = useAnimalStore((s) => s.animals);
+  const lotesPersonalizados = useAnimalStore((s) => s.lotesPersonalizados);
   const { mutate, isPending } = useMoveToLote();
+
+  const todosLosLotes = [...LOTES_DEFAULT, ...lotesPersonalizados];
 
   const [animalId, setAnimalId] = useState<string>(
     (modalData.animalId as string) ?? (animals[0]?.id ?? ''),
   );
-  const [lote, setLote] = useState<LoteNombre>('Escotero');
+  const [lote, setLote] = useState<string>(LOTES_DEFAULT[0]);
   const [tipoManejo, setTipoManejo] = useState<TipoManejo>('Extensivo');
 
   function handleSubmit(e: React.FormEvent) {
@@ -40,22 +42,11 @@ export const MoverALoteModal: FC = () => {
         </Field>
 
         <Field label="Lote de destino">
-          <div className="grid grid-cols-2 gap-2">
-            {LOTES.map((l) => (
-              <button
-                key={l}
-                type="button"
-                onClick={() => setLote(l)}
-                className={`py-2 rounded-xl border text-sm font-semibold transition-colors ${
-                  lote === l
-                    ? 'bg-primary text-white border-primary'
-                    : 'bg-white text-slate-600 border-slate-200 hover:border-primary/50'
-                }`}
-              >
-                {l}
-              </button>
+          <select value={lote} onChange={(e) => setLote(e.target.value)} className={INPUT_CLS}>
+            {todosLosLotes.map((l) => (
+              <option key={l} value={l}>{l}</option>
             ))}
-          </div>
+          </select>
         </Field>
 
         <Field label="Tipo de manejo del lote">

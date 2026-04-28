@@ -14,7 +14,7 @@ interface GanadoTableProps {
   onPrevPage: () => void;
 }
 
-const COLS = ['ID', 'Nombre', 'Dueño', 'Sexo', 'Raza', 'Estado', 'Peso (kg)', 'Acciones'];
+const COLS = ['ID', 'Nombre', 'Dueño', 'Sexo', 'Raza', 'Estado', 'Lote', 'Peso (kg)', 'Acciones'];
 
 export const GanadoTable: FC<GanadoTableProps> = ({
   animals,
@@ -73,6 +73,15 @@ export const GanadoTable: FC<GanadoTableProps> = ({
                   <td className="px-5 py-4 text-slate-500 text-sm">{animal.raza}</td>
                   <td className="px-5 py-4">
                     <StatusBadge status={animal.estado} />
+                  </td>
+                  <td className="px-5 py-4">
+                    {animal.lote ? (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                        {animal.lote}
+                      </span>
+                    ) : (
+                      <span className="text-slate-300 text-sm">—</span>
+                    )}
                   </td>
                   <td className="px-5 py-4 text-slate-700 text-sm font-semibold">{animal.peso}</td>
                   <td className="px-5 py-4 text-right" onClick={(e) => e.stopPropagation()}>

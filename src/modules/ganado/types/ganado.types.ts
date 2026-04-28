@@ -7,6 +7,7 @@ export type RecordStatus = 'Confirmado' | 'Resuelto' | 'Pendiente' | 'Vencido';
 export type NoteType = 'Chequeo' | 'Seguimiento';
 export type GanadoTab = 'Bovinos' | 'Ceva' | 'Produccion';
 export type EstadoProduccion = 'Seca' | 'En lactancia' | 'Arrestada';
+export type EstadoReproductivo = 'P' | 'V';
 export type ModalType =
   | 'addAnimal'
   | 'editAnimal'
@@ -34,11 +35,16 @@ export interface Animal {
   fechaNacimiento?: string;
   // Genealogía
   genealogia?: { padreId?: string; madreId?: string };
-  pedigri?: string;
-  // Solo hembras
+  pedigri?: string;         // filename for display
+  pedigriFile?: string;     // base64 data URL
+  // Solo hembras — producción
   estadoProduccion?: EstadoProduccion;
-  // Lote y manejo
-  lote?: LoteNombre;
+  // Solo hembras — reproductivo
+  fechaUltimoParto?: string;
+  numeroDepartos?: number;
+  estadoReproductivo?: EstadoReproductivo;
+  // Lote y manejo (string to support custom lots)
+  lote?: string;
   tipoManejo?: TipoManejo;
 }
 

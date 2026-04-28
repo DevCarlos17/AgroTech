@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useAnimalStore } from '../../store/useAnimalStore';
 import { queryClient } from '../../../../shared/providers/QueryProvider';
-import type { Animal, LoteNombre, TipoManejo } from '../../types/ganado.types';
+import type { Animal, TipoManejo } from '../../types/ganado.types';
 
 export function useAddAnimal() {
   const addAnimal = useAnimalStore((s) => s.addAnimal);
@@ -45,7 +45,7 @@ export function useUpdateAnimal() {
 export function useMoveToLote() {
   const updateAnimal = useAnimalStore((s) => s.updateAnimal);
   return useMutation({
-    mutationFn: async ({ id, lote, tipoManejo }: { id: string; lote: LoteNombre; tipoManejo: TipoManejo }) => {
+    mutationFn: async ({ id, lote, tipoManejo }: { id: string; lote: string; tipoManejo: TipoManejo }) => {
       const updates: Partial<Animal> = { lote, tipoManejo };
       if (lote === 'Ceva') {
         updates.estado = 'Ceva';

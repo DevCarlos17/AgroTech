@@ -3,17 +3,22 @@ import { persist } from 'zustand/middleware';
 import type { Animal, InventoryStats } from '../types/ganado.types';
 import { ANIMALS } from '../data/ganado.mock';
 
+export const LOTES_DEFAULT = ['Escotero', 'Parido', 'Crías', 'Ceva'] as const;
+
 interface AnimalState {
   animals: Animal[];
+  lotesPersonalizados: string[];
   addAnimal: (animal: Animal) => void;
   updateAnimal: (id: string, updates: Partial<Animal>) => void;
   deleteAnimal: (id: string) => void;
+  addLotePersonalizado: (nombre: string) => void;
 }
 
 export const useAnimalStore = create<AnimalState>()(
   persist(
     (set) => ({
       animals: ANIMALS,
+      lotesPersonalizados: [],
 
       addAnimal(animal) {
         set((s) => ({ animals: [animal, ...s.animals] }));
@@ -27,6 +32,14 @@ export const useAnimalStore = create<AnimalState>()(
 
       deleteAnimal(id) {
         set((s) => ({ animals: s.animals.filter((a) => a.id !== id) }));
+      },
+
+      addLotePersonalizado(nombre) {
+        set((s) => ({
+          lotesPersonalizados: s.lotesPersonalizados.includes(nombre)
+            ? s.lotesPersonalizados
+            : [...s.lotesPersonalizados, nombre],
+        }));
       },
     }),
     { name: 'agrotech-animals-v3' },
