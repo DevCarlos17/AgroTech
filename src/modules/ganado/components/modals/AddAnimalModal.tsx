@@ -8,6 +8,7 @@ const RAZAS = ['Holstein', 'Jersey', 'Angus', 'Hereford', 'Brahman', 'Simmental'
 
 function estadoProduccionToStatus(ep: EstadoProduccion): AnimalStatus {
   if (ep === 'En lactancia') return 'Lactancia';
+  if (ep === 'Arrestada') return 'Arrestada';
   return 'Seca';
 }
 

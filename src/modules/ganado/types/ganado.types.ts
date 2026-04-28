@@ -1,4 +1,4 @@
-export type AnimalStatus = 'Lactancia' | 'Seca' | 'Ceva' | 'Gestante';
+export type AnimalStatus = 'Lactancia' | 'Seca' | 'Arrestada' | 'Ceva' | 'Gestante';
 export type AnimalSex = 'Macho' | 'Hembra';
 export type LoteNombre = 'Escotero' | 'Parido' | 'Crías' | 'Ceva';
 export type TipoManejo = 'Tabulado' | 'Semi-tabulado' | 'Extensivo';

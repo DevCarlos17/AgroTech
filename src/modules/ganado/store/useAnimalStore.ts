@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Animal, InventoryStats } from '../types/ganado.types';
+import { ANIMALS } from '../data/ganado.mock';
 
 interface AnimalState {
   animals: Animal[];
@@ -12,7 +13,7 @@ interface AnimalState {
 export const useAnimalStore = create<AnimalState>()(
   persist(
     (set) => ({
-      animals: [],
+      animals: ANIMALS,
 
       addAnimal(animal) {
         set((s) => ({ animals: [animal, ...s.animals] }));
@@ -28,7 +29,7 @@ export const useAnimalStore = create<AnimalState>()(
         set((s) => ({ animals: s.animals.filter((a) => a.id !== id) }));
       },
     }),
-    { name: 'agrotech-animals-v2' },
+    { name: 'agrotech-animals-v3' },
   ),
 );
 

@@ -14,18 +14,20 @@ const TABS: Tab[] = [
 ];
 
 const STATUS_OPTIONS_ALL = [
-  { value: 'Todos',     label: 'Todos'     },
-  { value: 'Lactancia', label: 'Lactancia' },
-  { value: 'Seca',      label: 'Seca'      },
-  { value: 'Ceva',      label: 'Ceva'      },
-  { value: 'Gestante',  label: 'Gestante'  },
+  { value: 'Todos',      label: 'Todos'      },
+  { value: 'Lactancia',  label: 'Lactancia'  },
+  { value: 'Seca',       label: 'Seca'       },
+  { value: 'Arrestada',  label: 'Arrestada'  },
+  { value: 'Ceva',       label: 'Ceva'       },
+  { value: 'Gestante',   label: 'Gestante'   },
 ];
 
 const STATUS_OPTIONS_PRODUCCION = [
-  { value: 'Todos',     label: 'Todos'     },
-  { value: 'Lactancia', label: 'Lactancia' },
-  { value: 'Seca',      label: 'Seca'      },
-  { value: 'Gestante',  label: 'Gestante'  },
+  { value: 'Todos',      label: 'Todos'      },
+  { value: 'Lactancia',  label: 'Lactancia'  },
+  { value: 'Seca',       label: 'Seca'       },
+  { value: 'Arrestada',  label: 'Arrestada'  },
+  { value: 'Gestante',   label: 'Gestante'   },
 ];
 
 const BREED_OPTIONS = [
@@ -79,7 +81,7 @@ export const GanadoFiltersBar: FC<GanadoFiltersBarProps> = ({
       </div>
 
       {/* Filter chips */}
-      <div className="flex gap-3 overflow-x-auto pb-1">
+      <div className="flex gap-3 pb-1">
         {activeTab !== 'Ceva' && (
           <Dropdown
             prefix="Estado"
