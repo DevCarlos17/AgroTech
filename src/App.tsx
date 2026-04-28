@@ -1,12 +1,12 @@
-import './App.css';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Layout from './shared/components/Layout';
-import DashboardPage from './pages/DashboardPage';
-import GanadoInventarioPage from './modules/ganado/pages/GanadoInventarioPage';
-import GanadoSaludPage from './modules/ganado/pages/GanadoSaludPage';
-import GanadoSaludListPage from './modules/ganado/pages/GanadoSaludListPage';
-import GanadoPesajesPage from './modules/ganado/pages/GanadoPesajesPage';
-import { ComingSoonPage } from './shared/components/ComingSoonPage';
+import "./App.css";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Layout from "./shared/components/Layout";
+import DashboardPage from "./pages/DashboardPage";
+import GanadoInventarioPage from "./modules/ganado/pages/GanadoInventarioPage";
+import GanadoSaludPage from "./modules/ganado/pages/GanadoSaludPage";
+import GanadoSaludListPage from "./modules/ganado/pages/GanadoSaludListPage";
+import GanadoPesajesPage from "./modules/ganado/pages/GanadoPesajesPage";
+import { ComingSoonPage } from "./shared/components/ComingSoonPage";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
           <Route path="ganado/salud/:id" element={<GanadoSaludPage />} />
           <Route path="ganado/pesajes" element={<GanadoPesajesPage />} />
 
-          {/* Otros módulos — próximos */}
+          {/* Otros módulos — próximos a desarrollar */}
           <Route
             path="cultivos"
             element={
