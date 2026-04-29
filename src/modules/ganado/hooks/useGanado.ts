@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useAnimalStore, selectInventoryStats } from '../store/useAnimalStore';
+import { useAnimalStore, selectInventoryStats, LOTES_DEFAULT } from '../store/useAnimalStore';
 import type { Animal, AnimalStatus, GanadoTab, InventoryStats } from '../types/ganado.types';
 
 const PAGE_SIZE = 8;
@@ -13,21 +13,31 @@ interface UseGanadoReturn {
   stats: InventoryStats;
   filterStatus: AnimalStatus | 'Todos';
   filterBreed: string;
+  filterLote: string;
+  todosLosLotes: string[];
   activeTab: GanadoTab;
   setActiveTab: (tab: GanadoTab) => void;
   setFilterStatus: (s: AnimalStatus | 'Todos') => void;
   setFilterBreed: (b: string) => void;
+  setFilterLote: (l: string) => void;
   goToNextPage: () => void;
   goToPrevPage: () => void;
 }
 
 export function useGanado(): UseGanadoReturn {
   const allAnimals = useAnimalStore((s) => s.animals);
+  const lotesPersonalizados = useAnimalStore((s) => s.lotesPersonalizados);
 
   const [page, setPage] = useState(1);
   const [filterStatus, setFilterStatus] = useState<AnimalStatus | 'Todos'>('Todos');
   const [filterBreed, setFilterBreed] = useState('Todas');
+  const [filterLote, setFilterLote] = useState('Todos');
   const [activeTab, setActiveTab] = useState<GanadoTab>('Bovinos');
+
+  const todosLosLotes = useMemo(
+    () => [...LOTES_DEFAULT, ...lotesPersonalizados],
+    [lotesPersonalizados],
+  );
 
   const filtered = useMemo(() => {
     let list = allAnimals;
@@ -43,9 +53,10 @@ export function useGanado(): UseGanadoReturn {
     // Secondary filters
     if (filterStatus !== 'Todos') list = list.filter((a) => a.estado === filterStatus);
     if (filterBreed !== 'Todas') list = list.filter((a) => a.raza === filterBreed);
+    if (filterLote !== 'Todos') list = list.filter((a) => a.lote === filterLote);
 
     return list;
-  }, [allAnimals, activeTab, filterStatus, filterBreed]);
+  }, [allAnimals, activeTab, filterStatus, filterBreed, filterLote]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -68,6 +79,11 @@ export function useGanado(): UseGanadoReturn {
     setPage(1);
   }
 
+  function handleSetFilterLote(l: string) {
+    setFilterLote(l);
+    setPage(1);
+  }
+
   return {
     animals,
     totalCount: filtered.length,
@@ -77,10 +93,13 @@ export function useGanado(): UseGanadoReturn {
     stats: selectInventoryStats(allAnimals),
     filterStatus,
     filterBreed,
+    filterLote,
+    todosLosLotes,
     activeTab,
     setActiveTab: handleSetActiveTab,
     setFilterStatus: handleSetFilterStatus,
     setFilterBreed: handleSetFilterBreed,
+    setFilterLote: handleSetFilterLote,
     goToNextPage: () => setPage((p) => Math.min(p + 1, totalPages)),
     goToPrevPage: () => setPage((p) => Math.max(p - 1, 1)),
   };

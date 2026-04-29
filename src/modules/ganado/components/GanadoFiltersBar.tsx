@@ -47,6 +47,9 @@ interface GanadoFiltersBarProps {
   onFilterStatus: (s: AnimalStatus | 'Todos') => void;
   filterBreed: string;
   onFilterBreed: (b: string) => void;
+  filterLote: string;
+  onFilterLote: (l: string) => void;
+  todosLosLotes: string[];
 }
 
 export const GanadoFiltersBar: FC<GanadoFiltersBarProps> = ({
@@ -56,9 +59,17 @@ export const GanadoFiltersBar: FC<GanadoFiltersBarProps> = ({
   onFilterStatus,
   filterBreed,
   onFilterBreed,
+  filterLote,
+  onFilterLote,
+  todosLosLotes,
 }) => {
   const statusOptions =
     activeTab === 'Produccion' ? STATUS_OPTIONS_PRODUCCION : STATUS_OPTIONS_ALL;
+
+  const loteOptions = [
+    { value: 'Todos', label: 'Todos' },
+    ...todosLosLotes.map((l) => ({ value: l, label: l })),
+  ];
 
   return (
     <div>
@@ -96,6 +107,13 @@ export const GanadoFiltersBar: FC<GanadoFiltersBarProps> = ({
           value={filterBreed}
           onChange={onFilterBreed}
           label="Todas"
+        />
+        <Dropdown
+          prefix="Lote"
+          options={loteOptions}
+          value={filterLote}
+          onChange={onFilterLote}
+          label="Todos"
         />
       </div>
     </div>

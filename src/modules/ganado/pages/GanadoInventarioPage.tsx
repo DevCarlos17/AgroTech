@@ -14,9 +14,12 @@ const GanadoInventarioPage: FC = () => {
     activeTab,
     filterStatus,
     filterBreed,
+    filterLote,
+    todosLosLotes,
     setActiveTab,
     setFilterStatus,
     setFilterBreed,
+    setFilterLote,
     goToNextPage,
     goToPrevPage,
   } = useGanado();
@@ -61,6 +64,9 @@ const GanadoInventarioPage: FC = () => {
         onFilterStatus={setFilterStatus}
         filterBreed={filterBreed}
         onFilterBreed={setFilterBreed}
+        filterLote={filterLote}
+        onFilterLote={setFilterLote}
+        todosLosLotes={todosLosLotes}
       />
 
       {/* Table */}
