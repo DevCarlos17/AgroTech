@@ -22,6 +22,8 @@ export const MoverALoteModal: FC = () => {
   const [lote, setLote] = useState<string>(LOTES_DEFAULT[0]);
   const [tipoManejo, setTipoManejo] = useState<TipoManejo>('Extensivo');
 
+  const loteOrigen = animals.find((a) => a.id === animalId)?.lote ?? 'Sin lote asignado';
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     mutate({ id: animalId, lote, tipoManejo }, { onSuccess: () => closeModal() });
@@ -39,6 +41,10 @@ export const MoverALoteModal: FC = () => {
               </option>
             ))}
           </select>
+        </Field>
+
+        <Field label="Lote de origen">
+          <div className={READONLY_CLS}>{loteOrigen}</div>
         </Field>
 
         <Field label="Lote de destino">
@@ -86,6 +92,8 @@ const Field: FC<{ label: string; children: React.ReactNode }> = ({ label, childr
   </div>
 );
 
+const READONLY_CLS =
+  'w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-500 bg-slate-50';
 const INPUT_CLS =
   'w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white';
 const CANCEL_CLS =
