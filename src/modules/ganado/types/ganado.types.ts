@@ -21,12 +21,18 @@ export type ModalType =
   | 'settings'
   | null;
 
+export interface RazaEntry {
+  raza: string;
+  porcentaje: number;
+}
+
 export interface Animal {
   id: string;
   nombre?: string;
   owner: string;
   sexo: AnimalSex;
   raza: string;
+  razaCompuesta?: RazaEntry[];
   estado: AnimalStatus;
   peso: number;
   foto?: string;

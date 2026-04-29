@@ -38,6 +38,9 @@ const BREED_OPTIONS = [
   { value: 'Brahman',   label: 'Brahman'   },
   { value: 'Simmental', label: 'Simmental' },
   { value: 'Limousin',  label: 'Limousin'  },
+  { value: 'Charolais', label: 'Charolais' },
+  { value: 'Gyr',       label: 'Gyr'       },
+  { value: 'Nelore',    label: 'Nelore'    },
 ];
 
 interface GanadoFiltersBarProps {
@@ -50,6 +53,8 @@ interface GanadoFiltersBarProps {
   filterLote: string;
   onFilterLote: (l: string) => void;
   todosLosLotes: string[];
+  searchQuery: string;
+  onSearchChange: (q: string) => void;
 }
 
 export const GanadoFiltersBar: FC<GanadoFiltersBarProps> = ({
@@ -62,6 +67,8 @@ export const GanadoFiltersBar: FC<GanadoFiltersBarProps> = ({
   filterLote,
   onFilterLote,
   todosLosLotes,
+  searchQuery,
+  onSearchChange,
 }) => {
   const statusOptions =
     activeTab === 'Produccion' ? STATUS_OPTIONS_PRODUCCION : STATUS_OPTIONS_ALL;
@@ -73,6 +80,30 @@ export const GanadoFiltersBar: FC<GanadoFiltersBarProps> = ({
 
   return (
     <div>
+      {/* Search bar */}
+      <div className="relative mb-4 max-w-sm">
+        <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px] pointer-events-none">
+          search
+        </span>
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder="Buscar por ID, nombre, raza o lote…"
+          className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white shadow-sm"
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => onSearchChange('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded text-slate-400 hover:text-rose-500 transition-colors"
+            aria-label="Limpiar búsqueda"
+          >
+            <span className="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        )}
+      </div>
+
       {/* Tabs */}
       <div className="flex border-b border-slate-100 gap-8 mb-6">
         {TABS.map((tab) => (

@@ -3,15 +3,17 @@ import { Modal } from '../../../../shared/components/Modal';
 import { useUIStore } from '../../../../shared/store/useUIStore';
 import { useAddAnimal } from '../../hooks/mutations/useAnimalMutations';
 import { useAnimalStore, LOTES_DEFAULT } from '../../store/useAnimalStore';
+import { RazaComposer, razaEntriesToString, razaEntriesValid } from '../RazaComposer';
+import { AnimalAutocomplete } from '../AnimalAutocomplete';
 import type {
   AnimalStatus,
   AnimalSex,
   EstadoProduccion,
   TipoManejo,
   EstadoReproductivo,
+  RazaEntry,
 } from '../../types/ganado.types';
 
-const RAZAS = ['Holstein', 'Jersey', 'Angus', 'Hereford', 'Brahman', 'Simmental', 'Limousin', 'Charolais', 'Gyr', 'Nelore'];
 const TIPOS_MANEJO: TipoManejo[] = ['Tabulado', 'Semi-tabulado', 'Extensivo'];
 
 function generateNextId(animals: { id: string }[]): string {
@@ -48,7 +50,7 @@ export const AddAnimalModal: FC = () => {
 
   // Características
   const [sexo, setSexo] = useState<AnimalSex>('Hembra');
-  const [raza, setRaza] = useState('Holstein');
+  const [razaEntries, setRazaEntries] = useState<RazaEntry[]>([{ raza: 'Holstein', porcentaje: 100 }]);
   const [peso, setPeso] = useState('');
 
   // Solo hembras — producción
@@ -102,6 +104,9 @@ export const AddAnimalModal: FC = () => {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    if (!razaEntriesValid(razaEntries)) return;
+    if (criaFinca && !madreId) return;
+
     const finalId = idMode === 'auto' ? autoId : id.trim();
     if (!finalId) return;
 
@@ -116,13 +121,16 @@ export const AddAnimalModal: FC = () => {
     const estado: AnimalStatus =
       sexo === 'Hembra' ? estadoProduccionToStatus(estadoProduccion) : 'Ceva';
 
+    const isPure = razaEntries.length === 1;
+
     mutate(
       {
         id: finalId,
         nombre: nombre.trim() || undefined,
         owner: owner.trim(),
         sexo,
-        raza,
+        raza: razaEntriesToString(razaEntries),
+        razaCompuesta: isPure ? undefined : razaEntries,
         estado,
         peso: Number(peso),
         lote: finalLote,
@@ -256,12 +264,10 @@ export const AddAnimalModal: FC = () => {
 
         {/* ── Características ────────────────────────────────── */}
         <Section label="Características">
-          <div className="grid grid-cols-3 gap-4">
-            <Field label="Raza">
-              <select value={raza} onChange={(e) => setRaza(e.target.value)} className={INPUT_CLS}>
-                {RAZAS.map((r) => <option key={r} value={r}>{r}</option>)}
-              </select>
-            </Field>
+          <Field label="Raza">
+            <RazaComposer value={razaEntries} onChange={setRazaEntries} />
+          </Field>
+          <div className="grid grid-cols-2 gap-4">
             <Field label="Sexo *">
               <select value={sexo} onChange={(e) => setSexo(e.target.value as AnimalSex)} className={INPUT_CLS}>
                 <option value="Hembra">Hembra</option>
@@ -399,25 +405,22 @@ export const AddAnimalModal: FC = () => {
         {/* ── Genealogía ─────────────────────────────────────── */}
         <Section label="Genealogía">
           <div className="grid grid-cols-2 gap-4">
-            <Field label="N° de Padre">
-              <select value={padreId} onChange={(e) => setPadreId(e.target.value)} className={INPUT_CLS}>
-                <option value="">— Sin especificar —</option>
-                {animals.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    #{a.id}{a.nombre ? ` — ${a.nombre}` : ''} ({a.sexo})
-                  </option>
-                ))}
-              </select>
+            <Field label="Padre">
+              <AnimalAutocomplete
+                animals={animals}
+                value={padreId}
+                onChange={setPadreId}
+                placeholder="Buscar padre por ID o nombre…"
+              />
             </Field>
-            <Field label="N° de Madre">
-              <select value={madreId} onChange={(e) => setMadreId(e.target.value)} className={INPUT_CLS}>
-                <option value="">— Sin especificar —</option>
-                {hembras.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    #{a.id}{a.nombre ? ` — ${a.nombre}` : ''} ({a.raza})
-                  </option>
-                ))}
-              </select>
+            <Field label={criaFinca ? 'Madre *' : 'Madre'}>
+              <AnimalAutocomplete
+                animals={hembras}
+                value={madreId}
+                onChange={setMadreId}
+                placeholder="Buscar madre por ID o nombre…"
+                required={criaFinca && !madreId}
+              />
             </Field>
           </div>
 
@@ -465,7 +468,11 @@ export const AddAnimalModal: FC = () => {
         {/* ── Actions ────────────────────────────────────────── */}
         <div className="flex gap-3 pt-1 border-t border-slate-100">
           <button type="button" onClick={closeModal} className={CANCEL_CLS}>Cancelar</button>
-          <button type="submit" disabled={isPending} className={SUBMIT_CLS}>
+          <button
+            type="submit"
+            disabled={isPending || !razaEntriesValid(razaEntries)}
+            className={SUBMIT_CLS}
+          >
             {isPending ? 'Guardando...' : 'Registrar Animal'}
           </button>
         </div>
