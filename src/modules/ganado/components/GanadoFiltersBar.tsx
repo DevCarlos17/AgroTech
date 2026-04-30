@@ -41,6 +41,7 @@ const BREED_OPTIONS = [
   { value: 'Charolais', label: 'Charolais' },
   { value: 'Gyr',       label: 'Gyr'       },
   { value: 'Nelore',    label: 'Nelore'    },
+  { value: 'Mestizo',   label: 'Mestizo'   },
 ];
 
 interface GanadoFiltersBarProps {

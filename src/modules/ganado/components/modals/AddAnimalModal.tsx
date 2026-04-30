@@ -8,6 +8,7 @@ import { AnimalAutocomplete } from '../AnimalAutocomplete';
 import type {
   AnimalStatus,
   AnimalSex,
+  EtapaAnimal,
   EstadoProduccion,
   TipoManejo,
   EstadoReproductivo,
@@ -50,16 +51,20 @@ export const AddAnimalModal: FC = () => {
 
   // Características
   const [sexo, setSexo] = useState<AnimalSex>('Hembra');
+  const [etapa, setEtapa] = useState<EtapaAnimal | ''>('');
   const [razaEntries, setRazaEntries] = useState<RazaEntry[]>([{ raza: 'Holstein', porcentaje: 100 }]);
   const [peso, setPeso] = useState('');
 
-  // Solo hembras — producción
+  // Solo vacas — producción
   const [estadoProduccion, setEstadoProduccion] = useState<EstadoProduccion>('En lactancia');
 
-  // Solo hembras — reproductivo
+  // Solo vacas — reproductivo
   const [fechaUltimoParto, setFechaUltimoParto] = useState('');
   const [numeroDepartos, setNumeroDepartos] = useState('');
   const [estadoReproductivo, setEstadoReproductivo] = useState<EstadoReproductivo>('V');
+  const [mesesPreñez, setMesesPreñez] = useState('');
+  const [revisionMedica, setRevisionMedica] = useState('');
+  const [revisionMedicaOtro, setRevisionMedicaOtro] = useState('');
 
   const mesesLactancia = useMemo(() => {
     if (!fechaUltimoParto) return null;
@@ -119,7 +124,7 @@ export const AddAnimalModal: FC = () => {
     }
 
     const estado: AnimalStatus =
-      sexo === 'Hembra' ? estadoProduccionToStatus(estadoProduccion) : 'Ceva';
+      etapa === 'Vaca' ? estadoProduccionToStatus(estadoProduccion) : 'Ceva';
 
     const isPure = razaEntries.length === 1;
 
@@ -129,6 +134,7 @@ export const AddAnimalModal: FC = () => {
         nombre: nombre.trim() || undefined,
         owner: owner.trim(),
         sexo,
+        etapa: etapa || undefined,
         raza: razaEntriesToString(razaEntries),
         razaCompuesta: isPure ? undefined : razaEntries,
         estado,
@@ -143,10 +149,14 @@ export const AddAnimalModal: FC = () => {
             : undefined,
         pedigri: pedigriFile?.name || undefined,
         pedigriFile: pedigriFile?.data || undefined,
-        estadoProduccion: sexo === 'Hembra' ? estadoProduccion : undefined,
-        fechaUltimoParto: sexo === 'Hembra' && fechaUltimoParto ? fechaUltimoParto : undefined,
-        numeroDepartos: sexo === 'Hembra' && numeroDepartos ? Number(numeroDepartos) : undefined,
-        estadoReproductivo: sexo === 'Hembra' ? estadoReproductivo : undefined,
+        estadoProduccion: etapa === 'Vaca' ? estadoProduccion : undefined,
+        fechaUltimoParto: etapa === 'Vaca' && fechaUltimoParto ? fechaUltimoParto : undefined,
+        numeroDepartos: etapa === 'Vaca' && numeroDepartos ? Number(numeroDepartos) : undefined,
+        estadoReproductivo: etapa === 'Vaca' ? estadoReproductivo : undefined,
+        mesesPreñez: etapa === 'Vaca' && estadoReproductivo === 'P' && mesesPreñez ? Number(mesesPreñez) : undefined,
+        revisionMedica: etapa === 'Vaca' && estadoReproductivo === 'V' && revisionMedica
+          ? (revisionMedica === 'Otro' ? revisionMedicaOtro || undefined : revisionMedica)
+          : undefined,
       },
       { onSuccess: () => closeModal() },
     );
@@ -274,23 +284,34 @@ export const AddAnimalModal: FC = () => {
                 <option value="Macho">Macho</option>
               </select>
             </Field>
-            <Field label="Peso inicial (kg) *">
-              <input
-                required
-                type="number"
-                min="1"
-                value={peso}
-                onChange={(e) => setPeso(e.target.value)}
-                placeholder="Ej: 550"
-                className={INPUT_CLS}
-              />
+            <Field label="Etapa">
+              <select value={etapa} onChange={(e) => setEtapa(e.target.value as EtapaAnimal | '')} className={INPUT_CLS}>
+                <option value="" disabled>Seleccionar etapa</option>
+                <option value="Vaca">Vaca</option>
+                <option value="Toro">Toro</option>
+                <option value="Novillo">Novillo</option>
+                <option value="Maute">Maute</option>
+                <option value="Becerro">Becerro</option>
+                <option value="Buey">Buey</option>
+              </select>
             </Field>
           </div>
+          <Field label="Peso inicial (kg) *">
+            <input
+              required
+              type="number"
+              min="1"
+              value={peso}
+              onChange={(e) => setPeso(e.target.value)}
+              placeholder="Ej: 550"
+              className={INPUT_CLS}
+            />
+          </Field>
         </Section>
 
-        {/* ── Datos de Hembra ─────────────────────────────────── */}
-        {sexo === 'Hembra' && (
-          <Section label="Datos de Hembra">
+        {/* ── Datos de Vaca ─────────────────────────────────── */}
+        {etapa === 'Vaca' && (
+          <Section label="Datos de Vaca">
             <Field label="Estatus de producción">
               <div className="flex gap-2">
                 {(['En lactancia', 'Seca', 'Arrestada'] as EstadoProduccion[]).map((ep) => (
@@ -364,6 +385,48 @@ export const AddAnimalModal: FC = () => {
                 </div>
               </Field>
             </div>
+
+            {estadoReproductivo === 'P' && (
+              <Field label="Meses de preñez">
+                <input
+                  type="number"
+                  min="1"
+                  max="9"
+                  value={mesesPreñez}
+                  onChange={(e) => setMesesPreñez(e.target.value)}
+                  placeholder="1 – 9 meses"
+                  className={INPUT_CLS}
+                />
+              </Field>
+            )}
+
+            {estadoReproductivo === 'V' && (
+              <Field label="Revisión médica">
+                <select
+                  value={revisionMedica}
+                  onChange={(e) => { setRevisionMedica(e.target.value); setRevisionMedicaOtro(''); }}
+                  className={INPUT_CLS}
+                >
+                  <option value="" disabled>Seleccionar revisión</option>
+                  <option value="CLOD">CLOD</option>
+                  <option value="CLOI">CLOI</option>
+                  <option value="F10-OD">F10-OD</option>
+                  <option value="F10-OI">F10-OI</option>
+                  <option value="F5-OI">F5-OI</option>
+                  <option value="F5-OD">F5-OD</option>
+                  <option value="Otro">Otro</option>
+                </select>
+                {revisionMedica === 'Otro' && (
+                  <input
+                    type="text"
+                    value={revisionMedicaOtro}
+                    onChange={(e) => setRevisionMedicaOtro(e.target.value)}
+                    placeholder="Especificar revisión médica"
+                    className={`${INPUT_CLS} mt-2`}
+                  />
+                )}
+              </Field>
+            )}
           </Section>
         )}
 

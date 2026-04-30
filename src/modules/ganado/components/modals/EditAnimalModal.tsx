@@ -8,6 +8,7 @@ import { AnimalAutocomplete } from '../AnimalAutocomplete';
 import type {
   AnimalStatus,
   AnimalSex,
+  EtapaAnimal,
   EstadoProduccion,
   TipoManejo,
   EstadoReproductivo,
@@ -41,6 +42,7 @@ export const EditAnimalModal: FC = () => {
   const [nombre, setNombre] = useState(animal?.nombre ?? '');
   const [owner, setOwner] = useState(animal?.owner ?? '');
   const [sexo, setSexo] = useState<AnimalSex>(animal?.sexo ?? 'Hembra');
+  const [etapa, setEtapa] = useState<EtapaAnimal | ''>(animal?.etapa ?? '');
   const [razaEntries, setRazaEntries] = useState<RazaEntry[]>(
     animal ? initRazaEntries(animal) : [{ raza: 'Holstein', porcentaje: 100 }],
   );
@@ -51,17 +53,28 @@ export const EditAnimalModal: FC = () => {
   const [nuevoLoteName, setNuevoLoteName] = useState('');
   const [tipoManejo, setTipoManejo] = useState<TipoManejo>(animal?.tipoManejo ?? 'Extensivo');
 
-  // Solo hembras — producción
+  // Solo vacas — producción
   const [estadoProduccion, setEstadoProduccion] = useState<EstadoProduccion>(
     animal?.estadoProduccion ?? 'En lactancia',
   );
 
-  // Solo hembras — reproductivo
+  // Solo vacas — reproductivo
   const [fechaUltimoParto, setFechaUltimoParto] = useState(animal?.fechaUltimoParto ?? '');
   const [numeroDepartos, setNumeroDepartos] = useState(String(animal?.numeroDepartos ?? ''));
   const [estadoReproductivo, setEstadoReproductivo] = useState<EstadoReproductivo>(
     animal?.estadoReproductivo ?? 'V',
   );
+  const [mesesPreñez, setMesesPreñez] = useState(String(animal?.mesesPreñez ?? ''));
+  const [revisionMedica, setRevisionMedica] = useState(() => {
+    const rm = animal?.revisionMedica ?? '';
+    const presets = ['CLOD', 'CLOI', 'F10-OD', 'F10-OI', 'F5-OI', 'F5-OD'];
+    return presets.includes(rm) ? rm : rm ? 'Otro' : '';
+  });
+  const [revisionMedicaOtro, setRevisionMedicaOtro] = useState(() => {
+    const rm = animal?.revisionMedica ?? '';
+    const presets = ['CLOD', 'CLOI', 'F10-OD', 'F10-OI', 'F5-OI', 'F5-OD'];
+    return presets.includes(rm) ? '' : rm;
+  });
 
   const mesesLactancia = useMemo(() => {
     if (!fechaUltimoParto) return null;
@@ -122,7 +135,7 @@ export const EditAnimalModal: FC = () => {
     }
 
     const estado: AnimalStatus =
-      sexo === 'Hembra' ? estadoProduccionToStatus(estadoProduccion) : 'Ceva';
+      etapa === 'Vaca' ? estadoProduccionToStatus(estadoProduccion) : 'Ceva';
 
     const isPure = razaEntries.length === 1;
 
@@ -133,6 +146,7 @@ export const EditAnimalModal: FC = () => {
           nombre: nombre.trim() || undefined,
           owner: owner.trim(),
           sexo,
+          etapa: etapa || undefined,
           raza: razaEntriesToString(razaEntries),
           razaCompuesta: isPure ? undefined : razaEntries,
           estado,
@@ -147,10 +161,14 @@ export const EditAnimalModal: FC = () => {
               : undefined,
           pedigri: pedigriFile?.name || undefined,
           pedigriFile: pedigriFile?.data || undefined,
-          estadoProduccion: sexo === 'Hembra' ? estadoProduccion : undefined,
-          fechaUltimoParto: sexo === 'Hembra' && fechaUltimoParto ? fechaUltimoParto : undefined,
-          numeroDepartos: sexo === 'Hembra' && numeroDepartos ? Number(numeroDepartos) : undefined,
-          estadoReproductivo: sexo === 'Hembra' ? estadoReproductivo : undefined,
+          estadoProduccion: etapa === 'Vaca' ? estadoProduccion : undefined,
+          fechaUltimoParto: etapa === 'Vaca' && fechaUltimoParto ? fechaUltimoParto : undefined,
+          numeroDepartos: etapa === 'Vaca' && numeroDepartos ? Number(numeroDepartos) : undefined,
+          estadoReproductivo: etapa === 'Vaca' ? estadoReproductivo : undefined,
+          mesesPreñez: etapa === 'Vaca' && estadoReproductivo === 'P' && mesesPreñez ? Number(mesesPreñez) : undefined,
+          revisionMedica: etapa === 'Vaca' && estadoReproductivo === 'V' && revisionMedica
+            ? (revisionMedica === 'Otro' ? revisionMedicaOtro || undefined : revisionMedica)
+            : undefined,
         },
       },
       { onSuccess: () => closeModal() },
@@ -247,22 +265,33 @@ export const EditAnimalModal: FC = () => {
                 <option value="Macho">Macho</option>
               </select>
             </Field>
-            <Field label="Peso (kg) *">
-              <input
-                required
-                type="number"
-                min="1"
-                value={peso}
-                onChange={(e) => setPeso(e.target.value)}
-                className={INPUT_CLS}
-              />
+            <Field label="Etapa">
+              <select value={etapa} onChange={(e) => setEtapa(e.target.value as EtapaAnimal | '')} className={INPUT_CLS}>
+                <option value="" disabled>Seleccionar etapa</option>
+                <option value="Vaca">Vaca</option>
+                <option value="Toro">Toro</option>
+                <option value="Novillo">Novillo</option>
+                <option value="Maute">Maute</option>
+                <option value="Becerro">Becerro</option>
+                <option value="Buey">Buey</option>
+              </select>
             </Field>
           </div>
+          <Field label="Peso (kg) *">
+            <input
+              required
+              type="number"
+              min="1"
+              value={peso}
+              onChange={(e) => setPeso(e.target.value)}
+              className={INPUT_CLS}
+            />
+          </Field>
         </Section>
 
-        {/* ── Datos de Hembra ─────────────────────────────────── */}
-        {sexo === 'Hembra' && (
-          <Section label="Datos de Hembra">
+        {/* ── Datos de Vaca ─────────────────────────────────── */}
+        {etapa === 'Vaca' && (
+          <Section label="Datos de Vaca">
             <Field label="Estatus de producción">
               <div className="flex gap-2">
                 {(['En lactancia', 'Seca', 'Arrestada'] as EstadoProduccion[]).map((ep) => (
@@ -336,6 +365,48 @@ export const EditAnimalModal: FC = () => {
                 </div>
               </Field>
             </div>
+
+            {estadoReproductivo === 'P' && (
+              <Field label="Meses de preñez">
+                <input
+                  type="number"
+                  min="1"
+                  max="9"
+                  value={mesesPreñez}
+                  onChange={(e) => setMesesPreñez(e.target.value)}
+                  placeholder="1 – 9 meses"
+                  className={INPUT_CLS}
+                />
+              </Field>
+            )}
+
+            {estadoReproductivo === 'V' && (
+              <Field label="Revisión médica">
+                <select
+                  value={revisionMedica}
+                  onChange={(e) => { setRevisionMedica(e.target.value); setRevisionMedicaOtro(''); }}
+                  className={INPUT_CLS}
+                >
+                  <option value="" disabled>Seleccionar revisión</option>
+                  <option value="CLOD">CLOD</option>
+                  <option value="CLOI">CLOI</option>
+                  <option value="F10-OD">F10-OD</option>
+                  <option value="F10-OI">F10-OI</option>
+                  <option value="F5-OI">F5-OI</option>
+                  <option value="F5-OD">F5-OD</option>
+                  <option value="Otro">Otro</option>
+                </select>
+                {revisionMedica === 'Otro' && (
+                  <input
+                    type="text"
+                    value={revisionMedicaOtro}
+                    onChange={(e) => setRevisionMedicaOtro(e.target.value)}
+                    placeholder="Especificar revisión médica"
+                    className={`${INPUT_CLS} mt-2`}
+                  />
+                )}
+              </Field>
+            )}
           </Section>
         )}
 

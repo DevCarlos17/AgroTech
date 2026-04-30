@@ -1,5 +1,6 @@
 export type AnimalStatus = 'Lactancia' | 'Seca' | 'Arrestada' | 'Ceva' | 'Gestante';
 export type AnimalSex = 'Macho' | 'Hembra';
+export type EtapaAnimal = 'Vaca' | 'Toro' | 'Novillo' | 'Maute' | 'Becerro' | 'Buey';
 export type LoteNombre = 'Escotero' | 'Parido' | 'Crías' | 'Ceva';
 export type TipoManejo = 'Tabulado' | 'Semi-tabulado' | 'Extensivo';
 export type RecordType = 'Vacunación' | 'Tratamiento' | 'Urgente';
@@ -45,10 +46,14 @@ export interface Animal {
   pedigriFile?: string;     // base64 data URL
   // Solo hembras — producción
   estadoProduccion?: EstadoProduccion;
+  // Etapa del animal
+  etapa?: EtapaAnimal;
   // Solo hembras — reproductivo
   fechaUltimoParto?: string;
   numeroDepartos?: number;
   estadoReproductivo?: EstadoReproductivo;
+  mesesPreñez?: number;      // solo si etapa=Vaca y estadoReproductivo='P'
+  revisionMedica?: string;   // solo si etapa=Vaca y estadoReproductivo='V'
   // Lote y manejo (string to support custom lots)
   lote?: string;
   tipoManejo?: TipoManejo;

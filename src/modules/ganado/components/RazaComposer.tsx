@@ -3,7 +3,7 @@ import type { RazaEntry } from '../types/ganado.types';
 
 const RAZAS_BASE = [
   'Holstein', 'Jersey', 'Angus', 'Hereford', 'Brahman',
-  'Simmental', 'Limousin', 'Charolais', 'Gyr', 'Nelore',
+  'Simmental', 'Limousin', 'Charolais', 'Gyr', 'Nelore', 'Mestizo',
 ];
 
 const INPUT_CLS =
@@ -19,9 +19,7 @@ export const RazaComposer: FC<RazaComposerProps> = ({ value, onChange }) => {
   const isValid = total === 100;
 
   function addRaza() {
-    const usedRazas = value.map((e) => e.raza);
-    const nextRaza = RAZAS_BASE.find((r) => !usedRazas.includes(r)) ?? RAZAS_BASE[0];
-    onChange([...value, { raza: nextRaza, porcentaje: 0 }]);
+    onChange([...value, { raza: '', porcentaje: 0 }]);
   }
 
   function removeRaza(idx: number) {
@@ -55,6 +53,7 @@ export const RazaComposer: FC<RazaComposerProps> = ({ value, onChange }) => {
             onChange={(e) => updateField(idx, 'raza', e.target.value)}
             className={`${INPUT_CLS} flex-1`}
           >
+            <option value="" disabled>Seleccionar raza</option>
             {RAZAS_BASE.map((r) => (
               <option key={r} value={r}>{r}</option>
             ))}
