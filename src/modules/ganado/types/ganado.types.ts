@@ -1,6 +1,6 @@
 export type AnimalStatus = 'Lactancia' | 'Seca' | 'Arrestada' | 'Ceva' | 'Gestante';
 export type AnimalSex = 'Macho' | 'Hembra';
-export type EtapaAnimal = 'Vaca' | 'Toro' | 'Novillo' | 'Maute' | 'Becerro' | 'Buey';
+export type EtapaAnimal = 'Vaca' | 'Toro' | 'Novillo' | 'Mauto' | 'Becerro' | 'Buey';
 export type LoteNombre = 'Escotero' | 'Parido' | 'Crías' | 'Ceva';
 export type TipoManejo = 'Tabulado' | 'Semi-tabulado' | 'Extensivo';
 export type RecordType = 'Vacunación' | 'Tratamiento' | 'Urgente';

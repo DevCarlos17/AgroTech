@@ -279,7 +279,16 @@ export const AddAnimalModal: FC = () => {
           </Field>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Sexo *">
-              <select value={sexo} onChange={(e) => setSexo(e.target.value as AnimalSex)} className={INPUT_CLS}>
+              <select
+                value={sexo}
+                onChange={(e) => {
+                  const newSexo = e.target.value as AnimalSex;
+                  setSexo(newSexo);
+                  if (newSexo === 'Hembra' && etapa === 'Toro') setEtapa('');
+                  if (newSexo === 'Macho' && etapa === 'Vaca') setEtapa('');
+                }}
+                className={INPUT_CLS}
+              >
                 <option value="Hembra">Hembra</option>
                 <option value="Macho">Macho</option>
               </select>
@@ -287,10 +296,10 @@ export const AddAnimalModal: FC = () => {
             <Field label="Etapa">
               <select value={etapa} onChange={(e) => setEtapa(e.target.value as EtapaAnimal | '')} className={INPUT_CLS}>
                 <option value="" disabled>Seleccionar etapa</option>
-                <option value="Vaca">Vaca</option>
-                <option value="Toro">Toro</option>
+                {sexo === 'Hembra' && <option value="Vaca">Vaca</option>}
+                {sexo === 'Macho' && <option value="Toro">Toro</option>}
                 <option value="Novillo">Novillo</option>
-                <option value="Maute">Maute</option>
+                <option value="Mauto">Mauto</option>
                 <option value="Becerro">Becerro</option>
                 <option value="Buey">Buey</option>
               </select>
