@@ -14,7 +14,7 @@ interface GanadoTableProps {
   onPrevPage: () => void;
 }
 
-const COLS = ['ID', 'Nombre', 'Dueño', 'Sexo', 'Raza', 'Estado', 'Lote', 'Peso (kg)', 'Acciones'];
+const COLS = ['ID', 'Nombre', 'Dueño', 'Sexo', 'Etapa', 'Raza', 'Estado', 'Lote', 'Peso (kg)', 'Acciones'];
 
 export const GanadoTable: FC<GanadoTableProps> = ({
   animals,
@@ -70,6 +70,9 @@ export const GanadoTable: FC<GanadoTableProps> = ({
                     <span className="text-slate-700 text-sm">{animal.owner}</span>
                   </td>
                   <td className="px-5 py-4 text-slate-500 text-sm">{animal.sexo}</td>
+                  <td className="px-5 py-4 text-slate-500 text-sm">
+                    {animal.etapa ?? <span className="text-slate-300">—</span>}
+                  </td>
                   <td className="px-5 py-4 text-slate-500 text-sm">{animal.raza}</td>
                   <td className="px-5 py-4">
                     <StatusBadge status={animal.estado} />
